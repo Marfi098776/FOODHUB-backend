@@ -26,29 +26,39 @@ enum OrderStatus {
   CANCELLED
 }
 
+model Category {
+  id        String   @id @default(cuid())
+  name      String
+  slug      String   @unique
+  createdAt DateTime @default(now())
+  meals     Meal[]
+}
+
 model User {
-  id              String           @id @default(cuid())
-  name            String
-  email           String           @unique
-  password        String
-  image           String?
-  role            Role             @default(CUSTOMER)
-  isActive        Boolean          @default(true)
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
+  id            String   @id
+  name          String
+  email         String
+  emailVerified Boolean  @default(false)
+  role          Role     @default(CUSTOMER)
+  isActive      Boolean  @default(true)
+  image         String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  providerProfile ProviderProfile?
   sessions        Session[]
   accounts        Account[]
-  providerProfile ProviderProfile?
   orders          Order[]
   reviews         Review[]
 
+  @@unique([email])
   @@map("user")
 }
 
 model Session {
   id        String   @id
   expiresAt DateTime
-  token     String   @unique
+  token     String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   ipAddress String?
@@ -56,6 +66,8 @@ model Session {
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  @@unique([token])
+  @@index([userId])
   @@map("session")
 }
 
@@ -75,40 +87,32 @@ model Account {
   createdAt             DateTime  @default(now())
   updatedAt             DateTime  @updatedAt
 
+  @@index([userId])
   @@map("account")
 }
 
 model Verification {
-  id         String    @id
+  id         String   @id
   identifier String
   value      String
   expiresAt  DateTime
-  createdAt  DateTime? @default(now())
-  updatedAt  DateTime? @updatedAt
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
+  @@index([identifier])
   @@map("verification")
 }
 
 model ProviderProfile {
-  id             String  @id @default(cuid())
-  userId         String  @unique
-  user           User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id             String   @id @default(cuid())
+  userId         String   @unique
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   restaurantName String
   description    String?
   imageUrl       String?
   address        String?
-
-  createdAt DateTime @default(now())
-  meals     Meal[]
-}
-
-model Category {
-  id   String @id @default(cuid())
-  name String
-  slug String @unique
-
-  createdAt DateTime @default(now())
-  meals     Meal[]
+  createdAt      DateTime @default(now())
+  meals          Meal[]
 }
 
 model Meal {
@@ -122,10 +126,9 @@ model Meal {
   price       Float
   imageUrl    String?
   isAvailable Boolean         @default(true)
-
-  createdAt  DateTime    @default(now())
-  orderItems OrderItem[]
-  reviews    Review[]
+  createdAt   DateTime        @default(now())
+  orderItems  OrderItem[]
+  reviews     Review[]
 }
 
 model Order {
@@ -135,10 +138,9 @@ model Order {
   status          OrderStatus @default(PLACED)
   deliveryAddress String
   totalAmount     Float
-
-  createdAt  DateTime    @default(now())
-  updatedAt  DateTime    @updatedAt
-  orderItems OrderItem[]
+  items           OrderItem[]
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
 }
 
 model OrderItem {
