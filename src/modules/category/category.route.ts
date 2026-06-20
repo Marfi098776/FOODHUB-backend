@@ -1,22 +1,12 @@
-import express, { NextFunction, Request, Response, Router } from "express";
+import express, { Router } from "express";
 import { CategoryController } from "./category.controller";
-import { auth as betterAuth } from "../../lib/auth"
+import auth, { UserRole } from "../../middleware/auth";
 
 const router = express.Router();
 
-const auth = (...roles: any) => {
-    return async (req: Request, res: Response, next: NextFunction) => {
-        const session = await betterAuth.api.getSession({
-            headers: req.headers as any
-
-        })
-        console.log(session);
-    }
-}
-
 router.post(
     "/",
-    auth("CUSTOMER", "PROVIDER", "ADMIN"),
+    auth(UserRole.ADMIN),
     CategoryController.createCategory
 );
 
@@ -32,11 +22,13 @@ router.get(
 
 router.patch(
     "/:id",
+    auth(UserRole.ADMIN),
     CategoryController.updateCategory
 );
 
 router.delete(
     "/:id",
+    auth(UserRole.ADMIN),
     CategoryController.deleteCategory
 );
 

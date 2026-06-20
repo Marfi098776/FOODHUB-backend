@@ -1,25 +1,30 @@
 import { Request, Response } from "express";
 import { CategoryService } from "./category.service";
 
-const createCategory = async (
-    req: Request,
-    res: Response
-) => {
-    const result =
-        await CategoryService.createCategory(req.body);
+const createCategory = async (req: Request, res: Response) => {
+    try {
+        // const user = req.user;
+        // if (!user) {
+        //     return res.status(400).json({
+        //         error: "Unauthorized"
+        //     });
+        // }
+        const result = await CategoryService.createCategory(req.body);
 
-    res.status(201).json({
-        success: true,
-        data: result,
-    });
-};
+        res.status(201).json({
+            success: true,
+            data: result,
+        });
+    } catch (error) {
+        res.status(400).json({
+            error: "category creation failed"
+        })
+    };
+}
 
-const getCategories = async (
-    req: Request,
-    res: Response
-) => {
-    const result =
-        await CategoryService.getCategories();
+
+const getCategories = async (req: Request, res: Response) => {
+    const result = await CategoryService.getCategories();
 
     res.status(200).json({
         success: true,

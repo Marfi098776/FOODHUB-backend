@@ -2,8 +2,7 @@ import { prisma } from "../../lib/prisma";
 
 
 const createCategory = async (payload: {
-    name: string;
-    slug: string;
+    name: string; slug: string; userId: string
 }) => {
     return prisma.category.create({
         data: payload,
