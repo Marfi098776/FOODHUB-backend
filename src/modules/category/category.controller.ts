@@ -3,12 +3,6 @@ import { CategoryService } from "./category.service";
 
 const createCategory = async (req: Request, res: Response) => {
     try {
-        // const user = req.user;
-        // if (!user) {
-        //     return res.status(400).json({
-        //         error: "Unauthorized"
-        //     });
-        // }
         const result = await CategoryService.createCategory(req.body);
 
         res.status(201).json({
@@ -24,58 +18,73 @@ const createCategory = async (req: Request, res: Response) => {
 
 
 const getCategories = async (req: Request, res: Response) => {
-    const result = await CategoryService.getCategories();
+    try {
+        const result = await CategoryService.getCategories();
 
-    res.status(200).json({
-        success: true,
-        data: result,
-    });
+        res.status(200).json({
+            success: true,
+            data: result,
+        });
+    } catch (err) {
+        res.status(400).json({
+            error: "categories fetched failed"
+        })
+    }
 };
 
-const getCategory = async (
-    req: Request,
-    res: Response
-) => {
-    const id = req.params.id as string
-    const result =
-        await CategoryService.getCategory(id);
+const getCategory = async (req: Request, res: Response) => {
+    try {
+        const id = req.params.id as string
+        const result =
+            await CategoryService.getCategory(id);
 
-    res.status(200).json({
-        success: true,
-        data: result,
-    });
+        res.status(200).json({
+            success: true,
+            data: result,
+        });
+    } catch (err) {
+        res.status(400).json({
+            error: "category fetched failed"
+        })
+    }
 };
 
-const updateCategory = async (
-    req: Request,
-    res: Response
-) => {
-    const id = req.params.id as string
-    const result =
-        await CategoryService.updateCategory(
-            id,
-            req.body
+const updateCategory = async (req: Request, res: Response) => {
+    try {
+        const id = req.params.id as string
+        const result =
+            await CategoryService.updateCategory(
+                id,
+                req.body
+            );
+
+        res.status(200).json({
+            success: true,
+            data: result,
+        });
+    } catch (err) {
+        res.status(400).json({
+            error: "category update failed"
+        })
+    }
+};
+
+const deleteCategory = async (req: Request, res: Response) => {
+    try {
+        const id = req.params.id as string
+        await CategoryService.deleteCategory(
+            id
         );
 
-    res.status(200).json({
-        success: true,
-        data: result,
-    });
-};
-
-const deleteCategory = async (
-    req: Request,
-    res: Response
-) => {
-    const id = req.params.id as string
-    await CategoryService.deleteCategory(
-        id
-    );
-
-    res.status(200).json({
-        success: true,
-        message: "Category deleted",
-    });
+        res.status(200).json({
+            success: true,
+            message: "Category deleted",
+        });
+    } catch (err) {
+        res.status(400).json({
+            error: "category delete failed"
+        })
+    }
 };
 
 export const CategoryController = {

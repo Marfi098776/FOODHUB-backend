@@ -1,12 +1,11 @@
 import express, { Router } from "express"
 import { mealsController } from "./meals.controller";
+import auth, { UserRole } from "../../middleware/auth";
 
 const router = express.Router();
 
-router.post("/", mealsController.createMeal);
-// router.get("/", mealsController.getMeals);
-// router.get("/:id", mealsController.getMeal);
-// router.patch("/:id", mealsController.updateMeal);
-// router.delete("/:id", mealsController.deleteMeal);
+router.post("/",
+    auth(UserRole.PROVIDER),
+    mealsController.createMeal);
 
 export const mealRouter: Router = router;
