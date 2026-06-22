@@ -8,41 +8,70 @@ const createMeal = async (payload: any) => {
     return result;
 };
 
-// const getMeals = async () => {
-//     return prisma.meal.findMany({
-//         include: {
-//             category: true,
-//             provider: true,
-//         },
-//     });
-// };
+const getMyMeals = async (userId: string) => {
+    const provider =
+        await prisma.providerProfile.findUnique({
+            where: {
+                userId,
+            },
+        });
 
-// const getMeal = async (id: string) => {
-//     return prisma.meal.findUnique({
-//         where: { id },
-//     });
-// };
+    return await prisma.meal.findMany({
+        where: {
+            providerId: provider!.id,
+        },
+        include: {
+            category: true,
+        },
+    });
+};
 
-// const updateMeal = async (
-//     id: string,
-//     payload: Partial<TMeal>
-// ) => {
-//     return prisma.meal.update({
-//         where: { id },
-//         data: payload,
-//     });
-// };
+const getAllMeals = async () => {
+    return prisma.meal.findMany({
+        include: {
+            provider: true,
+            category: true,
+        },
+    });
+};
 
-// const deleteMeal = async (id: string) => {
-//     return prisma.meal.delete({
-//         where: { id },
-//     });
-// };
+const getSingleMeal = async (
+    id: string
+) => {
+    return prisma.meal.findUnique({
+        where: {
+            id,
+        },
+        include: {
+            provider: true,
+            category: true,
+            reviews: true,
+        },
+    });
+};
+
+const updateMeal = async (id: string, payload: any) => {
+    return await prisma.meal.update({
+        where: {
+            id,
+        },
+        data: payload,
+    });
+};
+
+const deleteMeal = async (id: string) => {
+    return await prisma.meal.delete({
+        where: {
+            id,
+        },
+    });
+};
 
 export const MealsService = {
     createMeal,
-    // getMeals,
-    // getMeal,
-    // updateMeal,
-    // deleteMeal
+    getMyMeals,
+    getAllMeals,
+    getSingleMeal,
+    updateMeal,
+    deleteMeal
 }
