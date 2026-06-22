@@ -6,6 +6,7 @@ import { auth } from "./lib/auth";
 import cors from 'cors'
 import { ProviderRoute } from "./modules/providerProfile/providerProfile.route";
 import { orderRouter } from "./modules/order/order.route";
+import { reviewRouter } from "./modules/review/review.route";
 
 const app: Application = express();
 app.use(cors({
@@ -19,9 +20,10 @@ app.use(express.json());
 app.get("/", (req, res) => {
     res.send("Hello FOODHUB!!")
 })
-app.use("/orders", orderRouter)
-app.use("/provider", ProviderRoute)
 app.use("/categories", categoryRoutes);
+app.use("/provider", ProviderRoute)
 app.use("/provider/meals", mealRouter)
+app.use("/orders", orderRouter)
+app.use("/reviews", reviewRouter);
 
 export default app;

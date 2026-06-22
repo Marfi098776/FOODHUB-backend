@@ -7,6 +7,14 @@ export enum UserRole {
     ADMIN = "ADMIN"
 }
 
+export enum OrderStatus {
+    PLACED = "PLACED",
+    PREPARING = "PREPARING",
+    READY = "READY",
+    DELIVERED = "DELIVERED",
+    CANCELLED = "CANCELLED"
+}
+
 declare global {
     namespace Express {
         interface Request {
