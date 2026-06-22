@@ -50,19 +50,66 @@ const getSingleMeal = async (
     });
 };
 
-const updateMeal = async (id: string, payload: any) => {
+const updateMeal = async (mealId: string, userId: string, payload: any) => {
+    const provider = await prisma.providerProfile.findUnique({
+        where: {
+            userId,
+        },
+    });
+
+    if (!provider) {
+        throw new Error("Provider profile not found");
+    }
+
+    const meal = await prisma.meal.findUnique({
+        where: {
+            id: mealId,
+        },
+    });
+
+    if (!meal) {
+        throw new Error("Meal not found");
+    }
+
+    if (meal.providerId !== provider.id) {
+        throw new Error("Forbidden");
+    }
     return await prisma.meal.update({
         where: {
-            id,
+            id: mealId,
         },
         data: payload,
     });
 };
 
-const deleteMeal = async (id: string) => {
+const deleteMeal = async (mealId: string, userId: string) => {
+    const provider = await prisma.providerProfile.findUnique({
+        where: {
+            userId,
+        },
+    });
+
+    if (!provider) {
+        throw new Error("Provider profile not found");
+    }
+
+    const meal = await prisma.meal.findUnique({
+        where: {
+            id: mealId,
+        },
+    });
+
+    if (!meal) {
+        throw new Error("Meal not found");
+    }
+
+    if (meal.providerId !== provider.id) {
+        throw new Error("Forbidden");
+    }
+
     return await prisma.meal.delete({
         where: {
-            id,
+            id: mealId,
         },
     });
 };

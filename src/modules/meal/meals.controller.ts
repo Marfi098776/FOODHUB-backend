@@ -107,9 +107,15 @@ const getSingleMeal = async (req: Request, res: Response) => {
 
 const updateMeal = async (req: Request, res: Response) => {
     try {
-        const id = req.params.id as string;
+        const user = req.user;
+        if (!user) {
+            return res.status(401).json({
+                message: "Unauthorized",
+            });
+        }
         const result = await MealsService.updateMeal(
-            id,
+            req.params.id as string,
+            user.id,
             req.body
         );
 
@@ -125,20 +131,45 @@ const updateMeal = async (req: Request, res: Response) => {
     }
 };
 
-const deleteMeal = async (req: Request, res: Response) => {
+const deleteMeal = async (
+    req: Request,
+    res: Response
+) => {
     try {
-        const id = req.params.id as string;
+        const user = req.user;
+
+        if (!user) {
+            return res.status(401).json({
+                message: "Unauthorized",
+            });
+        }
+
         const result = await MealsService.deleteMeal(
-            id
+            req.params.id as string,
+            user.id
         );
-        res.status(200).json({
+
+        return res.status(200).json({
             success: true,
             data: result,
         });
-    } catch (err) {
-        console.error(err);
-        res.status(400).json({
-            error: "Meal delete failed",
+    } catch (error: any) {
+        console.error(error);
+
+        if (error.message === "Forbidden") {
+            return res.status(403).json({
+                message: "You can only delete your own meals",
+            });
+        }
+
+        if (error.message === "Meal not found") {
+            return res.status(404).json({
+                message: "Meal not found",
+            });
+        }
+
+        return res.status(400).json({
+            message: error.message,
         });
     }
 };
