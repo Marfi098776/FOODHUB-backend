@@ -79,9 +79,63 @@ const updateProfile = async (req: Request, res: Response) => {
     });
 };
 
+const getProviderOrders = async (
+    req: Request,
+    res: Response
+) => {
+    try {
+        const user = req.user;
+
+        if (!user) {
+            return res.status(401).json({
+                message: "Unauthorized",
+            });
+        }
+
+        const result =
+            await providerService.getProviderOrders(
+                user.id
+            );
+
+        return res.status(200).json({
+            success: true,
+            data: result,
+        });
+    } catch (error: any) {
+        return res.status(400).json({
+            message: error.message,
+        });
+    }
+};
+
+const getDashboardStats = async (
+    req: Request,
+    res: Response
+) => {
+    try {
+        const user = req.user;
+
+        const result =
+            await providerService.getDashboardStats(
+                user!.id
+            );
+
+        return res.status(200).json({
+            success: true,
+            data: result,
+        });
+    } catch (error: any) {
+        return res.status(400).json({
+            message: error.message,
+        });
+    }
+};
+
 export const providerController = {
     createProfile,
     getMyProfile,
     getSingleProvider,
-    updateProfile
+    updateProfile,
+    getProviderOrders,
+    getDashboardStats
 }

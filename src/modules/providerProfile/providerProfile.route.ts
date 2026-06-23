@@ -21,6 +21,18 @@ router.get(
     providerController.getSingleProvider
 );
 
+router.get(
+    "/orders",
+    auth(UserRole.PROVIDER),
+    providerController.getProviderOrders
+);
+
+router.get(
+    "/dashboard",
+    auth(UserRole.PROVIDER),
+    providerController.getDashboardStats
+);
+
 router.patch(
     "/profile",
     auth(UserRole.PROVIDER),

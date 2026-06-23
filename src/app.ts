@@ -7,6 +7,8 @@ import cors from 'cors'
 import { ProviderRoute } from "./modules/providerProfile/providerProfile.route";
 import { orderRouter } from "./modules/order/order.route";
 import { reviewRouter } from "./modules/review/review.route";
+import { adminRoutes } from "./modules/admin/admin.route";
+import { customerRoutes } from "./modules/customer/customer.routes";
 
 const app: Application = express();
 app.use(cors({
@@ -25,5 +27,7 @@ app.use("/provider", ProviderRoute)
 app.use("/provider/meals", mealRouter)
 app.use("/orders", orderRouter)
 app.use("/reviews", reviewRouter);
+app.use("/admin", adminRoutes);
+app.use("/customer", customerRoutes);
 
 export default app;
